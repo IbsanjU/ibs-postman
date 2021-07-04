@@ -1,0 +1,22 @@
+{
+  "name": "ibs-postman",
+  "version": "1.0.0",
+  "description": " postman clone",
+  "main": "index.js",
+  "scripts": {
+    "start": "snowpack dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\"\""
+  },
+  "author": "ibsanju",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bootstrap": "^5.0.2"
+  },
+  "devDependencies": {
+    "snowpack": "^3.7.1"
+  }
+}
