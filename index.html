@@ -70,6 +70,52 @@
             </button>
           </li>
         </ul>
+        <div class="tab-content p-3 border-top-0 border">
+          <div
+            class="tab-pane fade show active"
+            id="query-params"
+            role="tabpanel"
+            aria-labelledby="query-params-tab"
+          >
+            <div data-add-query-params></div>
+            <button
+              data-add-query-param-btn
+              class="mt-2 btn btn-outline-success"
+              type="button"
+            >
+              Add
+            </button>
+          </div>
+          <div
+            class="tab-pane fade show active"
+            id="request-headers"
+            role="tabpanel"
+            aria-labelledby="request-headers-tab"
+          >
+            <div data-request-headers></div>
+            <button
+              data-request-headers-btn
+              class="mt-2 btn btn-outline-success"
+              type="button"
+            >
+              Add header
+            </button>
+          </div>
+          <div
+            class="tab-pane fade show active"
+            id="json"
+            role="tabpanel"
+            aria-labelledby="json-tab"
+          >
+            <div
+              data-json-request-body
+              class="overflow-auto"
+              style="max-height: 200px"
+            >
+              Json body
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </body>
