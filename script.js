@@ -13,6 +13,12 @@ document
         queryParamsContainer.append(createKeyValuePair());
     });
 
+document
+    .querySelector("[data-add-request-header-btn]")
+    .addEventListener("click", () => {
+        requestHeadersContainer.append(createKeyValuePair());
+    });
+
 queryParamsContainer.append(createKeyValuePair());
 requestHeadersContainer.append(createKeyValuePair());
 
