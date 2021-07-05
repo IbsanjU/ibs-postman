@@ -1,11 +1,18 @@
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
+import prettyBytes from "pretty-bytes";
+import setupEditors from "./setupEditor";
 
 const queryParamsContainer = document.querySelector("[data-query-params]");
 const requestHeadersContainer = document.querySelector(
     "[data-request-headers]"
 );
 const keyValueTemplate = document.querySelector("[data-key-value-template]");
+const form = document.querySelector("[data-form]");
+const responseHeadersContainer = document.querySelector(
+    "[data-response-headers]"
+);
 
 document
     .querySelector("[data-add-query-param-btn]")
@@ -29,3 +36,94 @@ function createKeyValuePair() {
     });
     return element;
 }
+
+const { requestEditor, updateResponseEditor } = setupEditors();
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let data;
+
+    try {
+        data = JSON.parse(requestEditor.state.doc.toString() || null);
+    } catch (e) {
+        alert("JSON data is malformed");
+        return;
+    }
+
+    axios({
+            url: document.querySelector("[data-url").value,
+            method: document.querySelector("[data-method]").value,
+            params: keyValuePairToObjects(queryParamsContainer),
+            headers: keyValuePairToObjects(requestHeadersContainer),
+            data,
+        })
+        .catch((e) => e)
+        .then((response) => {
+            document
+                .querySelector("[data-response-section]")
+                .classList.remove("d-none");
+            updateResponseDetails(response);
+            updateResponseEditor(response.data);
+            updateResponseHeaders(response.headers);
+            console.log(response);
+        });
+});
+
+function keyValuePairToObjects(container) {
+    const pairs = container.querySelectorAll("[data-key-value-pair]");
+    return [...pairs].reduce((data, pair) => {
+        const key = pair.querySelector("[data-key]").value;
+        const value = pair.querySelector("[data-value]").value;
+
+        if (key === "") return data;
+        return {...data, [key]: value };
+    }, {});
+}
+
+axios.interceptors.request.use((request) => {
+    request.customData = request.customData || {};
+    request.customData.startTime = new Date().getTime();
+    return request;
+});
+
+axios.interceptors.response.use(updateEndTime, (e) => {
+    return Promise.reject(updateEndTime(e.response));
+});
+
+function updateEndTime(response) {
+    response.customData = response.customData || {};
+    response.customData.time =
+        new Date().getTime() - response.config.customData.startTime;
+    return response;
+}
+
+function updateResponseDetails(response) {
+    document.querySelector("[data-status]").textContent = response.status;
+    document.querySelector("[data-time]").textContent = response.customData.time;
+    document.querySelector("[data-size]").textContent = prettyBytes(
+        JSON.stringify(response.data).length +
+        JSON.stringify(response.headers).length
+    );
+}
+
+function updateResponseHeaders(headers) {
+    responseHeadersContainer.innerHTML = "";
+    Object.entries(headers).forEach(([key, value]) => {
+        const keyElement = document.createElement("div");
+        keyElement.textContent = key;
+        responseHeadersContainer.append(keyElement);
+        const valueElement = document.createElement("div");
+        valueElement.textContent = value;
+        responseHeadersContainer.append(valueElement);
+    });
+}
+
+//=========================================================================================================
+// npm i bootstrap
+// npm i--save - dev snowpack
+// npm install @popperjs / core--save
+// npm i jquery
+// npm i axios
+// npm i pretty - bytes
+// npm i @codemirror
+// npm i @codemirror/basic-setup @codemirror/view @codemirror/commands @codemirror/lang-json
